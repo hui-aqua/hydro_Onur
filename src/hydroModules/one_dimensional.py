@@ -37,7 +37,7 @@ class line:
         """
         self.model_index = str(model_index)
         self.dw0 = dw0  # used for the hydrodynamic coefficients
-        self.element=hydro_element
+        self.element=hydro_element  # list [p1, p2]
         #
         self.length=0.0
         self.v=np.array([0,0,0], dtype=float) # structural velocity of element
@@ -100,7 +100,11 @@ class line:
         self.get_element_vector(position)
         self.get_u(u)
         # (-pi/2,pi/2)
-        self.alpha=float(np.arccos(np.dot(self.vectorE,self.u)/(np.finfo(float).eps+np.linalg.norm(np.dot(self.vectorE,self.u)))) )
+        u_dot_ve=np.dot(self.vectorE,self.u)
+        if np.linalg.norm(u_dot_ve)==0:
+            self.alpha=np.pi/2
+        else:
+            self.alpha=float(np.arccos(u_dot_ve/np.linalg.norm(u_dot_ve))) 
             
     def get_force_coefficient(self):
         re_num = row_water * self.dw0 * np.linalg.norm(self.u) / dynamic_viscosity
