@@ -213,8 +213,8 @@ class pipe(line):
         self.hydro_total_forces = np.array([0,0,0], dtype=float)
 
     def get_hydrostatic_force(self,position:np.array,elevation:list):
-        # self.cal_submerge_ratio(position,elevation)
-        self.ratio=1
+        self.cal_submerge_ratio(position,elevation)
+        # self.ratio=1
         element_volume = self.length * 0.25*np.pi*pow(self.dwh,2)
         self.hydro_static_forces=np.array([0,0,self.ratio*gravity*element_volume*row_water])
 
