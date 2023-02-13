@@ -18,78 +18,7 @@ row_water = 1025.0  # [kg/m3]   sea water density
 kinematic_viscosity = 1.004e-6  # when the water temperature is 20 degree.
 dynamic_viscosity = 1.002e-3  # when the water temperature is 20 degree.
 gravity = 9.81
-
-class cage:
-    def __init__(self, net_panels:list):
-        self.netOBJ=net_panels
-
-        self.element=[]
-        for each in net_panels:
-            self.element.append(each.element)
-
-        pointID=[]
-        for each_element in self.element:
-            for i in each_element:
-                pointID.append(i)
-
-        self.pointID=list(set(pointID)) # set of points in a cage
-        self.center=np.array([0.0,0.0,0.0])
-        self.volume=0.0
-        self.hydro_dynamic_forces = np.array([0,0,0], dtype=float)
-        self.hydro_static_forces =np.array([0,0,0], dtype=float)
-        self.hydro_total_forces = np.array([0,0,0], dtype=float)
-        self.reduction=[]
-
-    def get_cage_center(self,position:np.array):
-        self.center=position[self.pointID,:].mean(axis=0)
-    
-    def get_cage_volume(self):
-        volume=0
-        for each_element in self.netOBJ:
-            volume+=each_element.area*np.dot(each_element.center/3.0,each_element.vectorN)
-        self.volume=volume
    
-
-    def get_hydro_force(self):
-        self.hydro_total_forces = np.array([0,0,0], dtype=float)
-        for each_element in self.netOBJ:
-            self.hydro_total_forces+=each_element.hydro_total_forces
-    
-    def get_r(self,position:np.array):
-        self.reduction=[1.0]*len(position)
-        self.get_cage_center(position)
-        for i in self.pointID:
-            o_p=position[i]-self.center
-            if o_p[0]>0:
-                self.reduction[i]=0.8
-            else:
-                self.reduction[i]=1.0
-            
-    
-    
-                      
-    # def cal_volume_tetrahedron(self, point1, point2, point3):
-    #     vector_a = point1-self.center
-    #     vector_b = point2-self.center
-    #     vector_c = point3-self.center
-    #     return abs(np.dot(vector_a, (np.cross(vector_b, vector_c))))/6.0
-        
-    # def get_cage_volume(self,position:np.array):
-    #     self.get_cage_center(position)
-    #     volume=0
-    #     for each_element in self.element:
-    #         if len(each_element)==3:
-    #             volume+=cal_volume_tetrahedron(position[each_element[0]],
-    #                                            position[each_element[1]]
-    #                                            position[each_element[2]])
-    #         if len(each_element)==4: # quad = 2 triangle
-    #             volume+=cal_volume_tetrahedron(position[each_element[0]],
-    #                                            position[each_element[1]]
-    #                                            position[each_element[2]])
-    #             volume+=cal_volume_tetrahedron(position[each_element[0]],
-    #                                            position[each_element[3]]
-    #                                            position[each_element[2]])          
-    
 class netting:
     """
     For Screen hydrodynamic models, the forces on netting are calculated based on individual a panel section of netting.
