@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": "/usr/bin/python3",
     "files.associations": {
         "*Dict": "OpenFOAM",
         "*Properties": "OpenFOAM",
@@ -9,7 +8,11 @@
         "fvSolution": "OpenFOAM",
         "**/constant/g": "OpenFOAM",
         "**/0/*": "OpenFOAM",
+        "netPanel.C": "cpp",
+        "chrono": "cpp",
+        "random": "cpp",
+        "limits": "cpp",
         "fsinetFoam.C": "cpp",
-        "netPanel.C": "cpp"
+        "createFields.H": "cpp"
     }
 }
