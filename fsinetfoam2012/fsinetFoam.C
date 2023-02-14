@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     if (Pstream::master())
     {
         // Open the file
-        myOutFilePtr = new OFstream("velocity_on_elements.txt");
+        myOutFilePtr = new OFstream("velocity_on_node.out");
     }
     
 while (runTime.run())

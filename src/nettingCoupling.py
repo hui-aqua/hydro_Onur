@@ -15,6 +15,7 @@ import os
 import time
 import sys
 import numpy as np
+import fluidfoam as ff
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -177,68 +178,25 @@ def write_fh(hydro_force, time_fe, cwd):
     os.rename(cwd + '/Fh.tmp', cwd + '/Fh')
     finish_flag(cwd, "fh.flag")
 
-velocity_dict = {'time_record': ['0']}
+def get_velocity(cwd, time_aster):
 
-
-def get_velocity(cwd, length_velocity, time_aster):
-    """
-    :param cwd: working path for code aster
-    :param length_velocity: the length of the list of element(or vlocity)
-    :param time_aster: the time in Code_Aster
-    :return: a numpy array of velocity on elements
-    """
     print("Here>>>>>>>>>>>>>velo>>>  " + str(time_aster))
     cwd_foam_root = "/".join(cwd.split("/")[0:-1])
-    velocity_dict, time_foam = read_velocity(cwd_foam_root, length_velocity)
-    time_foam = velocity_dict['time_record'][-1]
-    while float(time_aster) > float(time_foam) or str(time_foam) == str(0):
-        time.sleep(0.1)
-        velocity_dict, time_foam = read_velocity(cwd_foam_root, length_velocity)
+    if os.path.exists(os.path.join(cwd_foam_root,"velocity_on_elements.txt")):
+        velo=ff.readvector(cwd_foam_root +'/velocity_on_node.out')
+        velo=velo.T
+
+        infile = open(cwd_foam_root +'/velocity_on_node.out', 'r')
+        firstLine = infile.readline()
+        infile.close()
+
+        time_foam = firstLine.split(" ")[3]
+        file_name="/velocityAT{time:.3f}.out".format(time=float(time_foam))
+        np.savetxt(cwd+file_name,velo)
+        return velo
     else:
-        # velocity_dict, time_foam = read_velocity(cwd_foam_root, length_velocity)
-        # print("velocity from get_velocity i s "+str(np.array(velocity_dict["velocities_at_" + str(time_foam)])))
-        f = open(cwd + "/velocity_on_element.txt", "w")
-        f.write(str(velocity_dict))
-        f.close()
-        return np.array(velocity_dict["velocities_at_" + str(time_foam)])
-
-
-def read_velocity(cwd_foam_root, length_velocity):
-    """
-    :param cwd_foam_root: work path
-    :param length_velocity: The length of velocity file, normally equal to the length of elements
-    :return: return the velocity dictionary and time in openfoam
-    """
-    while not os.path.exists(os.path.join(cwd_foam_root,"velocity_on_elements.txt")):
-        # print("path= "+ str(os.path.join(cwd_foam_root,"velocity_on_elements.txt")))
-        print("Wait for velocity from OpenFoam......")
-        time.sleep(0.1)
-
-    else:
-        f = open(cwd_foam_root + "/velocity_on_elements.txt", "r")
-        lines = f.readlines()
-        time_foam = str(0)
-        for line in lines[-length_velocity * 5:]:
-            if "The velocities at" in line:
-                time_foam = line.split(" ")[3]
-                if len(line.split()) == 6:
-                    start_line = lines.index(line) + 3
-                    end_line = lines.index(line) + 3 + length_velocity
-                    if (end_line < len(lines)) and (str(time_foam) not in velocity_dict['time_record']):
-                        velocity_dict['time_record'].append(str(time_foam))
-                        velocity_dict["velocities_at_" + str(time_foam)] = []
-                        for item in range(length_velocity):
-                            try:
-                                velocity_dict["velocities_at_" + str(time_foam)].append(
-                                    [float(lines[item + start_line].split()[0][1:]),
-                                     float(lines[item + start_line].split()[1]),
-                                     float(lines[item + start_line].split()[2][:-1])])
-                            except:
-                                velocity_dict["velocities_at_" + str(time_foam)].append(
-                                    [float(lines[start_line].split()[0][1:]),
-                                     float(lines[start_line].split()[1]),
-                                     float(lines[start_line].split()[2][:-1])])
-    return velocity_dict, velocity_dict['time_record'][-1]
-
+        pass
+    
+        
 if __name__ == "__main__":
     pass
