@@ -120,11 +120,7 @@ int main(int argc, char *argv[])
 
     OFstream* myOutFilePtr = NULL;
 
-    if (Pstream::master())
-    {
-        // Open the file
-        myOutFilePtr = new OFstream("velocity_on_node.out");
-    }
+
     
 while (runTime.run())
     {
@@ -184,7 +180,7 @@ while (runTime.run())
         // read from outside
         // need to confirm ... might be wrong data structure
         Info<< ">>> Start fsi function..."<< "  ClockTime = " << runTime.elapsedClockTime() << " s"<<endl;
-        while (not exists("./constant/position_flag")) {
+        while (not exists("./constant/position.flag")) {
             sleep(0.1);
             Info<<">>>    Waiting 0.01s for posi"<<endl;
         }
@@ -199,7 +195,7 @@ while (runTime.run())
         
         Nettings.readPosi(structuralPositions);
         
-        while (not exists("./constant/fh_flag")){
+        while (not exists("./constant/fh.flag")){
             sleep(0.1);
             Info<<">>>    Waiting 0.01s for fh"<<endl;
         }
@@ -227,6 +223,8 @@ while (runTime.run())
 //        Info<< "Start writing velocity"<< "  ClockTime = " << runTime.elapsedClockTime() << " s"<<endl;
         if (Pstream::master())
         {
+        // Open the file
+            myOutFilePtr = new OFstream("velocity_on_node.out");
             OFstream& myOutFile = *myOutFilePtr;
             myOutFile
                     << "The velocities at " << runTime.timeName()<< " s are: "<< Nettings.FluidU()  << endl;

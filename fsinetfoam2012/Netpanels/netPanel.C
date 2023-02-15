@@ -384,12 +384,9 @@ void Foam::netPanel::readPosi(
 
     Info << "Z min is " << min(z_array - thickness_memb) << endl;
     Info << "Z max is " << max(z_array + thickness_memb) << endl;
-    position_range = (min(x_array - thickness_memb),
-                      max(x_array + thickness_memb),
-                      min(y_array - thickness_memb),
-                      max(y_array + thickness_memb),
-                      min(z_array - thickness_memb),
-                      max(z_array + thickness_memb));
+    tensor position_range(min(x_array - thickness_memb),0,max(x_array + thickness_memb),
+                          min(y_array - thickness_memb),0,max(y_array + thickness_memb),
+                          min(z_array - thickness_memb),0,max(z_array + thickness_memb));
     Info << "position range  is " << position_range << endl;
 }
 
