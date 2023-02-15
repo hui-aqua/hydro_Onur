@@ -306,7 +306,7 @@ void Foam::netPanel::updateVelocity(
     forAll(structuralPositions_memb, Elemi) // loop through all the structural emlements
     {
         maxDistance = thresholdLength * 2; //started from 2 m ML_memb
-        vector nearestCell(vector::zero);
+        vector nearestCell(0.25, 0, 0);
         scalar loops(0);
         forAll(gathered_mesh, processorI) // loop through all the cell,
         {

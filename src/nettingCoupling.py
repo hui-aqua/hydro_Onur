@@ -28,7 +28,7 @@ def start_flag(cwd, flag):
     :return:  create a empty file to tell openfoam the file starts writing
     """
     if os.path.isfile(os.path.join(cwd,str(flag))):
-        print("path is :"+str(os.path.join(cwd,str(flag))))
+        # print("path is :"+str(os.path.join(cwd,str(flag))))
         os.remove(os.path.join(cwd,str(flag)))
     else:
         pass
@@ -50,7 +50,7 @@ def write_position(position, cwd):
     :param cwd: work path,
     :return: write the nodes' positions to "constant" folder as a file named "posi"
     """
-    print(cwd)
+    # print(cwd)
     start_flag(cwd, "position.flag")
     head_file = ["// Input for the nets in openfoam.",
                  "// Author: Hui Cheng",
@@ -148,7 +148,7 @@ def write_fh(hydro_force, time_fe, cwd):
     :param cwd: work path,
     :return: write the hydrodynamic forces to "constant" folder as a file named "Fh" and save the total hydrodynamic forces on netting to "forceOnNetting.txt"
     """
-    print("Here>>>>>>>>>>>>>Fh>>>  " + str(time_fe))
+    print("Here>>>>>>>>>>>>>write Fh>>>  " + str(time_fe))
     start_flag(cwd, "fh.flag")
     head_file = ["// Input for the nets in openfoam.",
                  "// Author: Hui Cheng",
@@ -178,26 +178,30 @@ def write_fh(hydro_force, time_fe, cwd):
     os.rename(cwd + '/Fh.tmp', cwd + '/Fh')
     finish_flag(cwd, "fh.flag")
 
-def get_velocity(cwd, time_aster):
-
-    print("Here>>>>>>>>>>>>>velo>>>  " + str(time_aster))
+def get_velocity(cwd,uc_org):
+    velo=uc_org
     cwd_foam_root = "/".join(cwd.split("/")[0:-1])
     if os.path.exists(os.path.join(cwd_foam_root,"velocity_on_node.out")):
-        velo=ff.readvector(cwd_foam_root +'/velocity_on_node.out')
-        velo=velo.T
-
+        try:
+            velo=ff.readvector(cwd_foam_root +'/velocity_on_node.out')
+            velo=velo.T
+        except:
+            print(type(velo))
+            print("[Warning] velocity reading error, we will try to read the file again at the next time step")
+        
         infile = open(cwd_foam_root +'/velocity_on_node.out', 'r')
         firstLine = infile.readline()
         infile.close()
 
         time_foam = firstLine.split(" ")[3]
-        file_name="/velocityAT{time:.3f}.out".format(time=float(time_foam))
+        file_name="/velocityAT{time:.2f}.out".format(time=float(time_foam))
         np.savetxt(cwd+file_name,velo)
-        return velo
+        print("Here>>>>>>>>>>>>> velocity extracted from openfoam at " + time_foam)
+            
     else:
         print("Here>>>>>>>>>>>>>[Warning]" )
         print("we did not get the fluid velocity from Openfoam at this time, we will try to get at next time step")
-    
+    return velo
         
 if __name__ == "__main__":
     pass
