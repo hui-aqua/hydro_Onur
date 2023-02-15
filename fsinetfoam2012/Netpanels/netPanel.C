@@ -297,7 +297,7 @@ void Foam::netPanel::updateVelocity(
     const scalar &thresholdLength)
 {
     Info << ">>> UpdateVelocity" << endl;
-    List<vector> fluidVelocities(structuralPositions_memb.size(), vector::zero);
+    List<vector> fluidVelocities(structuralPositions_memb.size(), vector(0.25,0,0));
     //    const vectorField &centres(mesh.C());
     //    const label &nCells = mesh.nCells();
     //    Info << "In updateVelocity, number of mesh is " << nCells << endl;
