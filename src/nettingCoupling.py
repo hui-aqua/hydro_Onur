@@ -182,7 +182,7 @@ def get_velocity(cwd, time_aster):
 
     print("Here>>>>>>>>>>>>>velo>>>  " + str(time_aster))
     cwd_foam_root = "/".join(cwd.split("/")[0:-1])
-    if os.path.exists(os.path.join(cwd_foam_root,"velocity_on_elements.txt")):
+    if os.path.exists(os.path.join(cwd_foam_root,"velocity_on_node.out")):
         velo=ff.readvector(cwd_foam_root +'/velocity_on_node.out')
         velo=velo.T
 
@@ -195,7 +195,8 @@ def get_velocity(cwd, time_aster):
         np.savetxt(cwd+file_name,velo)
         return velo
     else:
-        pass
+        print("Here>>>>>>>>>>>>>[Warning]" )
+        print("we did not get the fluid velocity from Openfoam at this time, we will try to get at next time step")
     
         
 if __name__ == "__main__":
