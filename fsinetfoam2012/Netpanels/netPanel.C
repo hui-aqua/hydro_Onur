@@ -250,7 +250,7 @@ void Foam::netPanel::addResistance(
             if (
                 isInPorousZone(centres[cellI], p0, p1, p2) || isInPorous_line(centres[cellI], p0, p1, p2))
             {
-                Usource[cellI] -= structuralForces_memb[Elementi] * V[cellI];
+                Usource[cellI] -= structuralForces_memb[Elementi] * V[cellI]/fluidrho_memb;
                 porosityField[cellI] = Sn_memb;
                 // Info << ">>> addResistance   >>> add source is "<<Usource[cellI] << endl;
             }
