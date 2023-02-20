@@ -266,6 +266,7 @@ void Foam::netPanel::updatePoroField(
     // Info << "The structural elements are " << structuralElements_memb << endl;
     // step1 set all the cell as 1
     Info << ">>> UpdatePorousField" << endl;
+    Info << "porosity is "<<porosity() << endl;
     forAll(mesh.C(), cellI)
     {
         porosityField[cellI] = 1.0;
@@ -303,10 +304,10 @@ void Foam::netPanel::updateVelocity(
     //    Info << "In updateVelocity, number of mesh is " << nCells << endl;
     // Info << "The structural elements are " << structuralElements_memb << endl;
     scalar maxDistance(10);                 //started from 2 m ML_memb
-    forAll(structuralPositions_memb, Elemi) // loop through all the structural emlements
+    forAll(structuralPositions_memb, posii) // loop through all the structural emlements
     {
         maxDistance = thresholdLength * 2; //started from 2 m ML_memb
-        vector nearestCell(0.25, 0, 0);
+        vector nearestCell(0, 0, 0);
         scalar loops(0);
         forAll(gathered_mesh, processorI) // loop through all the cell,
         {
@@ -316,11 +317,11 @@ void Foam::netPanel::updateVelocity(
             }
             forAll(gathered_mesh[processorI], PointI)
             {
-                scalar k1(calcDist(gathered_mesh[processorI][PointI], structuralPositions_memb[Elemi]));
+                scalar k1(calcDist(gathered_mesh[processorI][PointI], structuralPositions_memb[posii]));
                 if (k1 < maxDistance)
                 {
                     maxDistance = k1;
-                    fluidVelocities[Elemi] = gatheredU[processorI][PointI];
+                    fluidVelocities[posii] = gatheredU[processorI][PointI];
                     nearestCell = gathered_mesh[processorI][PointI];
                     loops += 1;
                 }
