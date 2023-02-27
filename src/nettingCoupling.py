@@ -86,7 +86,7 @@ def genFSInet(netElement:list):
             fsiNet.append(item)
         elif len(item)==4:
             fsiNet.append([item[0],item[1],item[2]])
-            fsiNet.append([item[0],item[2],item[3]])
+            fsiNet.append([item[1],item[3],item[2]])
     return fsiNet
 
 def genFh(netElement:list,fsiVolume:list,fh:list):
